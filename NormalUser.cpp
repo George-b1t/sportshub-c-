@@ -21,7 +21,9 @@ void NormalUser::menu(BookingSystem& system) {
         cout << "4. Visualizar Meus Agendamentos\n";
         cout << "5. Avaliar Quadra\n";
         cout << "6. Visualizar Avaliações\n";
-        cout << "7. Logout\n";
+        cout << "7. Visualizar Meus Pagamentos\n"; // Nova opção
+        cout << "8. Visualizar Minhas Notificações\n"; // Nova opção
+        cout << "9. Logout\n";
         cout << "Escolha uma opção: ";
         cin >> choice;
 
@@ -45,10 +47,16 @@ void NormalUser::menu(BookingSystem& system) {
             system.viewReviews();
             break;
         case 7:
+            system.viewUserPayments(*this);
+            break;
+        case 8:
+            this->viewNotifications();
+            break;
+        case 9:
             cout << "Logout bem-sucedido!\n";
             break;
         default:
             cout << "Opção inválida!\n";
         }
-    } while (choice != 7);
+    } while (choice != 9);
 }

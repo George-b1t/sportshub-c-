@@ -1,6 +1,7 @@
 #ifndef BOOKINGSYSTEM_H
 #define BOOKINGSYSTEM_H
 
+#include <map>
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -17,9 +18,9 @@ class BookingSystem {
 private:
     std::vector<User*> users;
     std::vector<Establishment> establishments;
-    // Key: Booking ID
     std::unordered_map<std::string, Booking> bookings;
     std::list<Review> reviews;
+    std::map<std::string, Payment> payments;
 
 public:
     BookingSystem();
@@ -38,6 +39,7 @@ public:
 
     void viewBookings();
     void viewUserBookings(User& user);
+    void viewUserPayments(User& user);
 
     void cancelBooking(User& user);
     void addReview(User& user);

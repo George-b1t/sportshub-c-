@@ -21,7 +21,8 @@ void AdminUser::menu(BookingSystem& system) {
         cout << "4. Cancelar Agendamento\n";
         cout << "5. Gerar Relatório\n";
         cout << "6. Visualizar Avaliações\n";
-        cout << "7. Logout\n";
+        cout << "7. Visualizar Minhas Notificações\n"; // Nova opção
+        cout << "8. Logout\n";
         cout << "Escolha uma opção: ";
         cin >> choice;
 
@@ -45,10 +46,13 @@ void AdminUser::menu(BookingSystem& system) {
             system.viewReviews();
             break;
         case 7:
+            this->viewNotifications();
+            break;
+        case 8:
             cout << "Logout bem-sucedido!\n";
             break;
         default:
             cout << "Opção inválida!\n";
         }
-    } while (choice != 7);
+    } while (choice != 8);
 }

@@ -196,6 +196,40 @@ void BookingSystem::viewEstablishments() {
     }
 }
 
+void BookingSystem::viewUserPayments(User& user) {
+    const auto& userPayments = user.getPayments();
+    if (userPayments.empty()) {
+        std::cout << "Você não tem pagamentos registrados.\n";
+        return;
+    }
+
+    std::cout << "\n=== Meus Pagamentos ===\n";
+    for (const auto& payment : userPayments) {
+        std::cout << "ID do Pagamento: " << payment.paymentID << "\n";
+        std::cout << "ID da Reserva: " << payment.bookingID << "\n";
+        std::cout << "Valor: R$" << payment.amount << "\n";
+        std::cout << "Método: ";
+        switch (static_cast<int>(payment.method)) {
+            case static_cast<int>(PaymentMethod::CREDIT_CARD):
+                std::cout << "Cartão de Crédito\n";
+                break;
+            case static_cast<int>(PaymentMethod::DEBIT_CARD):
+                std::cout << "Cartão de Débito\n";
+                break;
+            case static_cast<int>(PaymentMethod::PIX):
+                std::cout << "PIX\n";
+                break;
+            case static_cast<int>(PaymentMethod::BOLETO):
+                std::cout << "Boleto\n";
+                break;
+            default:
+                std::cout << "Método de pagamento desconhecido\n";
+        }
+        std::cout << "Data: " << payment.date << "\n";
+        std::cout << "-----------------------------\n";
+    }
+}
+
 void BookingSystem::bookCourt(User& user) {
     if (establishments.empty()) {
         cout << "Nenhum estabelecimento cadastrado!\n";
@@ -295,18 +329,41 @@ void BookingSystem::bookCourt(User& user) {
     string bookingID = est.name + "|" + court.name + "|" + selectedDate + "|" + selectedTime;
     Booking booking(bookingID, est.name, court.name, selectedDate, selectedTime, user.getUsername());
 
-    // Processamento de Pagamento
     double price = 100.0; // Preço base
     double discount = user.getMembership().getDiscount();
     double finalPrice = price * (1 - discount);
 
-    cout << "O valor a ser pago é R$" << finalPrice << "\n";
+    std::cout << "O valor a ser pago é R$" << finalPrice << "\n";
+
+    // Escolha do método de pagamento
+    PaymentMethod method = Payment::choosePaymentMethod();
+
+    // Geração de ID único para o pagamento
+    std::string paymentID = "PAY" + std::to_string(payments.size() + 1);
+
+    // Obter data atual
+    time_t t = time(nullptr);
+    tm* now = localtime(&t);
+    std::stringstream ss;
+    char buffer[80];
+    strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", now);
+    ss << buffer;
+    std::string currentDateTime = ss.str();
+
+    // Criar objeto Payment
+    Payment payment(paymentID, bookingID, user.getUsername(), finalPrice, method, currentDateTime);
+
+    // Simulação de processamento de pagamento
     if (Payment::processPayment(booking, finalPrice)) {
         bookings[bookingID] = booking;
-        Notification::sendNotification(user.getUsername(), "Reserva confirmada para " + selectedDate + " às " + selectedTime);
-        cout << "Quadra agendada com sucesso!\n";
+        payments[paymentID] = payment;
+        user.addPayment(payment);
+
+        std::string notificationMsg = "Reserva confirmada para " + selectedDate + " às " + selectedTime;
+        user.addNotification(notificationMsg);
+        std::cout << "Quadra agendada com sucesso!\n";
     } else {
-        cout << "Falha no processamento do pagamento.\n";
+        std::cout << "Falha no processamento do pagamento.\n";
     }
 }
 
