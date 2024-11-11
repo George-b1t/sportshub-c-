@@ -3,6 +3,7 @@
 #include "NormalUser.h"
 #include <iostream>
 #include <sstream>
+#include <limits>
 
 using namespace std;
 
@@ -47,9 +48,18 @@ void BookingSystem::login() {
     string uname, pwd;
     cout << "Nome de usuário: ";
     cin >> uname;
+    // verifica se o nome de usuário n esta vazio
+    if (uname == "") {
+        cout << "Nome de usuário inválido!\n";
+        return;
+    }
     cout << "Senha: ";
     cin >> pwd;
-
+    // verifica se a senha n esta vazia
+    if (pwd == "") {
+        cout << "Senha inválida!\n";
+        return;
+    }
     User* user = authenticate(uname, pwd);
     if (user) {
         cout << "Login bem-sucedido!\n";
@@ -63,6 +73,14 @@ void BookingSystem::registerUser() {
     string uname, pwd;
     cout << "Escolha um nome de usuário: ";
     cin >> uname;
+    // verifica se o nome de usuário ja foi cadastrado
+    for (auto user : users) {
+        if (user->getUsername() == uname) {
+            cout << "Nome de usuário já cadastrado!\n";
+            return;
+        }
+    }
+
     cout << "Escolha uma senha: ";
     cin >> pwd;
 
